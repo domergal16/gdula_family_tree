@@ -8,7 +8,7 @@ Am testing my skills with Plotly/Dash by trying to generate a network (family tr
 We suggest you to create a separate virtual environment running Python 3 for this app, and install all of the required dependencies there. Run in Terminal/Command Prompt:
 
 ```
-git clone ``` (link to this folder) ```
+git clone https://github.com/domergal16/gdula_family_tree.git
 cd dash-sample-apps/apps/dash-opioid-epidemic
 python3 -m virtualenv venv
 ```
