@@ -417,6 +417,7 @@ test_fam = nx.DiGraph()
 test_fam.add_edges_from(edges)
 
 def make_edges(net,vis):
+    print('edge net = ',net)
     pos=graphviz_layout(net, prog='dot')
     edge_x = []
     edge_y = []
@@ -477,11 +478,15 @@ def get_subnode(stn):
 def make_subplot(test_node,o_net,net_dict,vis):
     if vis == False:
         k = o_net.subgraph(get_subnode(1))
+        print('k in subplot= ',k)
         l = list(k.nodes())
+        print('l in subplot= ',l)
     else:
         k = o_net.subgraph(get_subnode(test_node))
+        print('k in subplot= ',k)
         l = list(k.nodes())
-    print#('test_node=',test_node)
+        print('l in subplot= ',l)
+    #print#('test_node=',test_node)
     
     #print('k = ',k)
     subedge_trace = make_edges(k,vis)
@@ -591,6 +596,9 @@ def make_fig():#snode,vis):
 
     return fig
 
+
+
+
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server=app.server
@@ -599,7 +607,11 @@ app.layout = html.Div(children=[
     html.H1(children='Gdula Family Tree'),
 
     html.Div(children='''
-        Family Tree code written by Elizabeth Sudkamp. Information pulled from gdula.info . Written using NetworkX, Plotly, and Dash.
+        Family Tree code written by Elizabeth Sudkamp. 
+Information pulled from gdula.info . Written using NetworkX, Plotly, and Dash.
+
+### Warning
+It may take a few seconds for individual people to load in between clicks - please don't get too impatient!
     '''),
 
     dcc.Graph(
@@ -624,7 +636,7 @@ def update_point(selectInput):
     c = list(nfig.data[1].marker.color)
     s = list(nfig.data[1].marker.size)
 
-    nv,nw = scatt_v,scatt_w
+    nv,nw = nfig.data[2],nfig.data[3]
     
     t,vis,st = {},False,'Family of: ' 
     try:
@@ -638,7 +650,7 @@ def update_point(selectInput):
             if c[i] == '#05b8cc':
                 c[i],s[i],t[i],vis = '#71eeb8',20,'1',True
                 nv,nw = make_subplot(i,test_fam,result,vis)
-                st += sub_title(scatter.hovertext,i)
+                st += sub_title(nfig.data[1].hovertext,i)
             elif c[i] == '#71eeb8':
                 c[i],s[i],t[i],vis = '#05b8cc',10,0,False
                 nv,nw = make_subplot(1,test_fam,result,vis)
@@ -647,17 +659,18 @@ def update_point(selectInput):
                 c[j],s[j] = '#05b8cc',10
         #with nfig.batch_update():
         nfig.data[1].marker.color,nfig.data[1].marker.size = c,s
-        scatt_v.x,scatt_v.y = nv.x,nv.y
-        scatt_v.mode='lines'
-        scatt_v.line.color,scatt_v.line.width,scatt_v.visible=nv.line.color,nv.line.width,vis
-        scatt_w.x,scatt_w.y = nw.x,nw.y
+        nfig.data[2].x,nfig.data[2].y = nv.x,nv.y
+        nfig.data[2].mode='lines'
+        nfig.data[2].line.color,nfig.data[2].line.width,nfig.data[2].visible=nv.line.color,nv.line.width,vis
+        nfig.data[3].x,nfig.data[3].y = nw.x,nw.y
         print('out_marker colors: ',nw.marker.color)
-        scatt_w.marker.color,scatt_w.visible=nw.marker.color,vis
+        nfig.data[3].marker.color,nfig.data[3].visible=list(nw.marker.color),vis
+        nfig.data[3].marker.size = nw.marker.size
         title2['text']=st
         ann = list(nfig.layout.annotations)
         ann[2] = title2
         nfig.layout.annotations = tuple(ann)
-        scatt_w.hovertext,scatt_w.hoverinfo=nw.text,"text"
+        nfig.data[3].hovertext,nfig.data[3].hoverinfo=nw.text,"text"
         #nfig.data[1],nfig.data[2],nfig.data[3] = scatter,scatt_v,scatt_w
         
         return nfig
