@@ -478,14 +478,14 @@ def get_subnode(stn):
 def make_subplot(test_node,o_net,net_dict,vis):
     if vis == False:
         k = o_net.subgraph(get_subnode(1))
-        print('k in subplot= ',k)
+        #print('k in subplot= ',k)
         l = list(k.nodes())
-        print('l in subplot= ',l)
+        #print('l in subplot= ',l)
     else:
         k = o_net.subgraph(get_subnode(test_node))
-        print('k in subplot= ',k)
+        #print('k in subplot= ',k)
         l = list(k.nodes())
-        print('l in subplot= ',l)
+        #print('l in subplot= ',l)
     #print#('test_node=',test_node)
     
     #print('k = ',k)
@@ -507,8 +507,8 @@ def make_subplot(test_node,o_net,net_dict,vis):
     size[orig_i] = 20
     subnode_trace.marker.size = size
 
-    print(len(l))
-    print('colors = ',colors)
+    #print(len(l))
+    #print('colors = ',colors)
 
     return subedge_trace, subnode_trace
 
@@ -535,9 +535,6 @@ def make_fig():#snode,vis):
     fig.add_scatter(x=v.x,y=v.y,visible=v.visible,row=1,col=2)
     fig.add_scatter(x=w.x,y=w.y,mode='markers',visible=w.visible,row=1,col=2)
 
-    node_adjacencies = make_node_adj(test_fam)
-
-    #node_trace.marker.color = node_adjacencies
     node_trace.text = make_hovtext(result,result)
 
     pos3=graphviz_layout(test_fam, prog='dot')
@@ -596,23 +593,21 @@ def make_fig():#snode,vis):
 
     return fig
 
+markdown_text = '''
+### Warning
 
-
+It may take a few seconds for individual people to load in between clicks - please don't get too impatient!
+'''
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
 server=app.server
 
 app.layout = html.Div(children=[
     html.H1(children='Gdula Family Tree'),
-
-    html.Div(children='''
-        Family Tree code written by Elizabeth Sudkamp. 
-Information pulled from gdula.info . Written using NetworkX, Plotly, and Dash.
-
-### Warning
-It may take a few seconds for individual people to load in between clicks - please don't get too impatient!
-    '''),
+    html.Div(children='Family Tree code written by Elizabeth Sudkamp. Information pulled from gdula.info. Written using NetworkX, Plotly, and Dash.'),
+    html.Div([
+    dcc.Markdown(children=markdown_text)
+    ]),
 
     dcc.Graph(
         id='example-graph',
@@ -620,7 +615,7 @@ It may take a few seconds for individual people to load in between clicks - plea
     ),
     html.Br(),
     html.Div(id='my-output',children='File status: {}'.format(file_comp())
-),
+    ),
 ])
 
 @app.callback(
@@ -636,7 +631,7 @@ def update_point(selectInput):
     c = list(nfig.data[1].marker.color)
     s = list(nfig.data[1].marker.size)
 
-    nv,nw = nfig.data[2],nfig.data[3]
+    #nv,nw = nfig.data[2],nfig.data[3]
     
     t,vis,st = {},False,'Family of: ' 
     try:
